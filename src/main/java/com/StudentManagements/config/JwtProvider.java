@@ -2,90 +2,75 @@ package com.StudentManagements.config;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-import com.StudentManagements.models.Student;
+import java.security.Key;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
 
-import javax.crypto.SecretKey;
-import java.util.*;
+import com.StudentManagements.models.Role;
 
-@Service
+@Component
 public class JwtProvider {
+    private static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60 * 1000; 
+    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
-    private SecretKey key = Keys.hmacShaKeyFor(JwtConstant.SECRET_KEY.getBytes());
+    public String generateToken(String email, Role role) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("role", role.name());
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + JWT_TOKEN_VALIDITY);
 
-    public String generateToken(Authentication authentication, Student student) {
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        String roles = populatesAuthorities(authorities);
-
-        String jwt = Jwts.builder()
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 840000000))
-                .claim("email", student.getEmail())
-                .claim("studentId", student.getStudentId())
-                .claim("fullName", student.getFullName())
-                .claim("phone", student.getPhone())
-                .claim("dob", student.getDob() != null ? student.getDob().getTime() : null)
-                .claim("gender", student.getGender())
-                .claim("address", student.getAddress())
-                .claim("role", student.getRole().toString())
-                .claim("authorities", roles)
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(email)
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
                 .signWith(key)
                 .compact();
-
-        return jwt;
     }
 
-    public Claims extractClaims(String jwt) {
-        jwt = jwt.substring(7);
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt).getBody();
+    public String getEmailFromToken(String token) {
+        return getClaimFromToken(token, Claims::getSubject);
     }
 
-    public String getEmailFromJwtToken(String jwt) {
-        return extractClaims(jwt).get("email", String.class);
+    public String getRoleFromToken(String token) {
+        Claims claims = getAllClaimsFromToken(token);
+        return claims.get("role", String.class);
     }
 
-    public String getStudentIdFromJwtToken(String jwt) {
-        return extractClaims(jwt).get("studentId", String.class);
+    public Date getExpirationDateFromToken(String token) {
+        return getClaimFromToken(token, Claims::getExpiration);
     }
 
-    public String getFullNameFromJwtToken(String jwt) {
-        return extractClaims(jwt).get("fullName", String.class);
+    public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = getAllClaimsFromToken(token);
+        return claimsResolver.apply(claims);
     }
 
-    public String getPhoneFromJwtToken(String jwt) {
-        return extractClaims(jwt).get("phone", String.class);
+    private Claims getAllClaimsFromToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
-    public Date getDobFromJwtToken(String jwt) {
-        Long timestamp = extractClaims(jwt).get("dob", Long.class);
-        return timestamp != null ? new Date(timestamp) : null;
-    }
-
-    public int getGenderFromJwtToken(String jwt) {
-        return extractClaims(jwt).get("gender", Integer.class);
-    }
-
-    public String getAddressFromJwtToken(String jwt) {
-        return extractClaims(jwt).get("address", String.class);
-    }
-
-    public String getRoleFromJwtToken(String jwt) {
-        return extractClaims(jwt).get("role", String.class);
-    }
-
-    public String getAuthoritiesFromJwtToken(String jwt) {
-        return extractClaims(jwt).get("authorities", String.class);
-    }
-
-    public String populatesAuthorities(Collection<? extends GrantedAuthority> authorities) {
-        Set<String> auths = new HashSet<>();
-        for (GrantedAuthority authority : authorities) {
-            auths.add(authority.getAuthority());
+    public boolean isTokenValid(String token) {
+        try {
+            return !isTokenExpired(token);
+        } catch (Exception e) {
+            return false;
         }
-        return String.join(",", auths);
+    }
+
+    private boolean isTokenExpired(String token) {
+        final Date expiration = getExpirationDateFromToken(token);
+        return expiration.before(new Date());
     }
 }

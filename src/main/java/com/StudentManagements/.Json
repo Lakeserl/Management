@@ -1,0 +1,139 @@
+// POST /api/students/register
+
+{
+  "studentId": "SV001",
+  "fullName": "Nguyễn Văn A",
+  "email": "nguyenvana@gmail.com",
+  "password": "password123",
+  "phone": "0987654321",
+  "dob": "2000-01-01",
+  "address": "123 Nguyễn Huệ, Quận 1, TP.HCM",
+  "gender": 1
+}
+
+// POST /api/teachers/register
+
+{
+  "fullName": "Trần Thị B",
+  "email": "tranthib@gmail.com",
+  "password": "password123",
+  "phone": "0912345678"
+}
+
+// POST /api/auth/login
+{
+  "email": "nguyenvana@gmail.com",
+  "password": "password123",
+  "role": "STUDENT"
+}
+
+// POST /api/auth/login
+{
+  "email": "tranthib@gmail.com",
+  "password": "password123",
+  "role": "TEACHER"
+}
+
+// PUT /api/students/{id}
+{
+  "studentId": "SV001",
+  "fullName": "Nguyễn Văn A",
+  "email": "nguyenvana@gmail.com",
+  "password": "password123",
+  "phone": "0987654321",
+  "dob": "2000-01-01",
+  "address": "456 Lê Lợi, Quận 3, TP.HCM",
+  "gender": 1
+}
+
+// PUT /api/teachers/{id}
+{
+  "fullName": "Trần Thị B",
+  "email": "tranthib@gmail.com",
+  "password": "password123",
+  "phone": "0912345678"
+}
+
+// POST /api/students/{id}/change-password hoặc /api/teachers/{id}/change-password
+{
+  "currentPassword": "password123",
+  "newPassword": "newPassword123",
+  "confirmPassword": "newPassword123"
+}
+
+// response từ /api/auth/login
+{
+  "id": 1,
+  "email": "nguyenvana@gmail.com",
+  "fullName": "Nguyễn Văn A",
+  "role": "STUDENT",
+  "token": "eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiU1RVREVOVCIsInN1YiI6Im5ndXllbnZhbmFAZ21haWwuY29tIiwiaWF0IjoxNzEwNTk0NTU1LCJleHAiOjE3MTA2MTI1NTV9.abcdefghijklmnopqrstuvwxyz12345"
+}
+
+// GET /api/teachers/students
+[
+  {
+    "id": 1,
+    "studentId": "SV001",
+    "fullName": "Nguyễn Văn A",
+    "email": "nguyenvana@gmail.com",
+    "phone": "0987654321",
+    "dob": "2000-01-01",
+    "address": "123 Nguyễn Huệ, Quận 1, TP.HCM",
+    "gender": 1,
+    "role": "STUDENT",
+    "createdAt": "2025-03-16T10:15:00.000+00:00"
+  },
+  {
+    "id": 2,
+    "studentId": "SV002",
+    "fullName": "Lê Thị C",
+    "email": "lethic@gmail.com",
+    "phone": "0909123456",
+    "dob": "2001-05-10",
+    "address": "789 Điện Biên Phủ, Quận Bình Thạnh, TP.HCM",
+    "gender": 0,
+    "role": "STUDENT",
+    "createdAt": "2025-03-16T11:30:00.000+00:00"
+  }
+]
+
+// GET /api/students/{id}
+{
+  "id": 1,
+  "studentId": "SV001",
+  "fullName": "Nguyễn Văn A",
+  "email": "nguyenvana@gmail.com",
+  "phone": "0987654321",
+  "dob": "2000-01-01",
+  "address": "123 Nguyễn Huệ, Quận 1, TP.HCM",
+  "gender": 1,
+  "role": "STUDENT",
+  "auth": {
+    "failedAttempts": 0,
+    "accountNonLocked": true,
+    "lockTime": null
+  },
+  "createdAt": "2025-03-16T10:15:00.000+00:00"
+}
+
+// Error
+{
+  "status": "UNAUTHORIZED",
+  "message": "Sai email hoặc password",
+  "timestamp": "2025-03-16T13:45:30.123"
+}
+
+// LOCKED account
+{
+  "status": "LOCKED",
+  "message": "Tài khoản của bạn đã bị khóa do đăng nhập sai những 3 lần. Bạn có 24 giờ không truy cập được vào tài khoản :V",
+  "timestamp": "2025-03-16T14:20:15.789"
+}
+
+// Email đã tồn tại
+{
+  "status": "CONFLICT",
+  "message": "Email đã được sử dụng",
+  "timestamp": "2025-03-16T15:10:25.456"
+}

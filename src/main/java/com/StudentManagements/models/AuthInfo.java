@@ -12,7 +12,34 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 public class AuthInfo {
-    private String token;
-    private int failed = 0;
-    private Date lastFailed;
+    private int failedAttempts = 0;
+    private boolean accountNonLocked = true;
+    
+    private Date lockTime;
+
+	public int getFailedAttempts() {
+		return failedAttempts;
+	}
+
+	public void setFailedAttempts(int failedAttempts) {
+		this.failedAttempts = failedAttempts;
+	}
+
+	public boolean isAccountNonLocked() {
+		return accountNonLocked;
+	}
+
+	public void setAccountNonLocked(boolean accountNonLocked) {
+		this.accountNonLocked = accountNonLocked;
+	}
+
+	public Date getLockTime() {
+		return lockTime;
+	}
+
+	public void setLockTime(Date lockTime) {
+		this.lockTime = lockTime;
+	}
+    
+    
 }

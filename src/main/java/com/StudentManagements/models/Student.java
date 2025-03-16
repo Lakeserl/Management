@@ -1,33 +1,28 @@
 package com.StudentManagements.models;
 
-import jakarta.persistence.*;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+
 import java.util.Date;
 
-@Entity
-@Table(name = "students")
+@Document(collection = "students") 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Student {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class Student extends User{
+ 	@NotBlank(message = "Cần nhập mã số sinh viên")
     @Column(unique = true, nullable = false)
     private String studentId;
 
-    @Column(nullable = false)
-    private String fullName;
-
-    @Column(unique = true, nullable = false)
-    private String email;
-
-    @Column(nullable = false)
-    private String password;
-
+    @NotBlank(message = "Cần nhập số điện thoại")
     @Column(nullable = false)
     private String phone;
 
@@ -38,38 +33,13 @@ public class Student {
 
     private int gender; // -1: Unknown, 0: Female, 1: Male
 
-    @Enumerated(EnumType.STRING)
-    private Role role = Role.STUDENT;
-
-    @Embedded
-    private AuthInfo auth = new AuthInfo();
-
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt = new Date();
 
-	public Student(Long id, String studentId, String fullName, String email, String password, String phone, Date dob,
-			String address, int gender, Role role, AuthInfo auth, Date createdAt) {
-		this.id = id;
-		this.studentId = studentId;
-		this.fullName = fullName;
-		this.email = email;
-		this.password = password;
-		this.phone = phone;
-		this.dob = dob;
-		this.address = address;
-		this.gender = gender;
-		this.role = role;
-		this.auth = auth;
-		this.createdAt = createdAt;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @PrePersist
+    public void setRole(Role role) {
+        this.role = Role.STUDENT;
+    }
 
 	public String getStudentId() {
 		return studentId;
@@ -77,30 +47,6 @@ public class Student {
 
 	public void setStudentId(String studentId) {
 		this.studentId = studentId;
-	}
-
-	public String getFullName() {
-		return fullName;
-	}
-
-	public void setFullName(String fullName) {
-		this.fullName = fullName;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
 	}
 
 	public String getPhone() {
@@ -135,22 +81,6 @@ public class Student {
 		this.gender = gender;
 	}
 
-	public Role getRole() {
-		return role;
-	}
-
-	public void setRole(Role role) {
-		this.role = role;
-	}
-
-	public AuthInfo getAuth() {
-		return auth;
-	}
-
-	public void setAuth(AuthInfo auth) {
-		this.auth = auth;
-	}
-
 	public Date getCreatedAt() {
 		return createdAt;
 	}
@@ -158,6 +88,6 @@ public class Student {
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
 	}
-    
+	
     
 }
