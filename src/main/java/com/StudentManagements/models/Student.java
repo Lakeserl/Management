@@ -1,14 +1,11 @@
 package com.StudentManagements.models;
 
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import org.springframework.data.mongodb.core.index.Indexed;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
-
 import java.util.Date;
 
 @Document(collection = "students") 
@@ -19,24 +16,32 @@ import java.util.Date;
 @Builder
 public class Student extends User{
  	@NotBlank(message = "Cần nhập mã số sinh viên")
-    @Column(unique = true, nullable = false)
+    @Indexed(unique = true)
     private String studentId;
 
     @NotBlank(message = "Cần nhập số điện thoại")
-    @Column(nullable = false)
+    @Pattern(regexp = "^(0[35789])+(\\d{8})\\b$", message = "Số điện thoại không hợp lệ")
     private String phone;
 
-    @Temporal(TemporalType.DATE)
+    @Past(message = "Ngày sinh phải là ngày trong quá khứ")
     private Date dob;
 
+    @NotBlank(message = "Cần nhập địa chỉ")
+    @Pattern(regexp = "^[^\\n]*$", message = "Địa chỉ không hợp lệ")
     private String address;
 
     private int gender; // -1: Unknown, 0: Female, 1: Male
 
-    @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt = new Date();
 
     @PrePersist
+    public void prePersist() {
+        this.role = Role.STUDENT;
+        
+        if (this.createdAt == null) {
+            this.createdAt = new Date();
+        }
+    }
     public void setRole(Role role) {
         this.role = Role.STUDENT;
     }

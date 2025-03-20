@@ -1,18 +1,17 @@
 package com.StudentManagements.models;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-
-import java.util.Date;
 
 @Document(collection = "users")
 @Getter
@@ -20,26 +19,28 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public abstract class User {
-    @Id
+	@Id
     private String id;
-
-    @NotBlank(message = "Cần Nhập tên")
-    @Column(nullable = false)
+    
+    @NotBlank(message = "Cần nhập tên")
+    @Pattern(regexp = "^(?!.*[0-9])(?!.*[!@#$%^&*()_+\\-=\\[\\]{};:\"\\\\|,.<>\\/?])[^\\n]*$", message= "Tên không phù hợp")
     private String fullName;
-
-    @NotBlank(message = "Nhập email lệ")
+    
+    @NotBlank(message = "Cần nhập email")
     @Email(message = "Email phải hợp lệ")
-    @Column(unique = true, nullable = false)
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$", message = "Email không đúng định dạng")
+    @Indexed(unique = true)
     private String email;
-
+    
     @NotBlank(message = "Cần nhập password")
-    @Size(min = 6, message = "mật khẩu phải có ít nhất ̉ký tự trở lên")
-    @Column(nullable = false)
+    @Size(min = 6, message = "Mật khẩu phải có ít nhất 6 ký tự trở lên")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[#?!@$%^&*\\-.])(?!.*\\s).{6,}$", 
+             message = "Mật khẩu phải có ít nhất 6 ký tự và một ký tự thường, 1 ký tự hoa, 1 số, 1 ký tự đặc biệt và không được có khoảng trắng")
     private String password;
     
     @Enumerated(EnumType.STRING)
-	protected Role role;
-
+    protected Role role;
+    
     @Embedded
     private AuthInfo auth = new AuthInfo();
     

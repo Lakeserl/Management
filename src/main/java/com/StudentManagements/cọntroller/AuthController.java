@@ -21,4 +21,9 @@ public class AuthController {
         LoginResponse response = authService.login(loginRequest);
         return ResponseEntity.ok(response);
     }
+    @PostMapping("/logout")
+    public ResponseEntity<LogoutResponse> logout() {
+        LogoutResponse response = authService.logout();
+        return ResponseEntity.ok(response);
+    }
 }

@@ -2,6 +2,7 @@ package com.StudentManagements.services;
 
 import com.StudentManagements.dto.LoginRequest;
 import com.StudentManagements.dto.LoginResponse;
+import com.StudentManagements.dto.LogoutResponse;
 import com.StudentManagements.models.AuthInfo;
 import com.StudentManagements.models.Role;
 import com.StudentManagements.models.Student;
@@ -188,5 +189,9 @@ public class AuthService {
         }
         
         return false;
+    }
+    
+    public LogoutResponse logout() {
+        return new LogoutResponse("Đăng xuất thành công", true);
     }
 }
