@@ -54,7 +54,7 @@
   "phone": "0912345678"
 }
 
-// POST /api/students/{id}/change-password hoặc /api/teachers/{id}/change-password
+// POST /api/students/{id}/change-password || /api/teachers/{id}/change-password
 {
   "currentPassword": "password123",
   "newPassword": "newPassword123",

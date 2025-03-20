@@ -103,7 +103,7 @@ public class StudentService {
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy học sinh có id : " + id));
         
         if (!student.getEmail().equals(currentUserEmail)) {
-            throw new UnauthorizedException("Bạn chỉ có thể thay đổi mật khẩu của chính con mm");
+            throw new UnauthorizedException("Bạn chỉ có thể thay đổi mật khẩu của chính bạn");
         }
         
         if (!passwordEncoder.matches(request.getCurrentPassword(), student.getPassword())) {
