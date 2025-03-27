@@ -2,6 +2,7 @@ package com.StudentManagements.cọntroller;
 
 import com.StudentManagements.dto.LoginRequest;
 import com.StudentManagements.dto.LoginResponse;
+import com.StudentManagements.dto.LogoutResponse;
 import com.StudentManagements.services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

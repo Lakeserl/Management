@@ -2,6 +2,8 @@ package com.StudentManagements.models;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.index.Indexed;
+
+import jakarta.persistence.PrePersist;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;

@@ -35,11 +35,6 @@ public class StudentRegistrationRequest {
 
     private int gender = -1;
 
-	public String getEmail() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public String getStudentId() {
 		return studentId;
 	}
@@ -54,6 +49,14 @@ public class StudentRegistrationRequest {
 
 	public void setFullName(String fullName) {
 		this.fullName = fullName;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public String getPassword() {
@@ -95,10 +98,6 @@ public class StudentRegistrationRequest {
 	public void setGender(int gender) {
 		this.gender = gender;
 	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
 	
-	
+    
 }

@@ -29,7 +29,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) 
             throws ServletException, IOException {
         try {
+        	
+            String requestURI = request.getRequestURI();
+        	
             String jwt = getJwtFromRequest(request);
+            
+            if (requestURI.startsWith("/api/students/register")) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            
+            if (jwt == null || !tokenProvider.isTokenValid(jwt)) {
+                filterChain.doFilter(request, response);
+                return;
+            }
 
             if (jwt != null && tokenProvider.isTokenValid(jwt)) {
                 String email = tokenProvider.getEmailFromToken(jwt);
@@ -39,8 +53,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // Create authentication object
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         email, null, Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role.name())));
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
+//                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception ex) {
